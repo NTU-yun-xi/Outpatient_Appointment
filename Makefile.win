@@ -1,0 +1,136 @@
+# Project: Outpatient_Appointment
+# Makefile created by Dev-C++ 5.11
+
+CPP      = g++.exe -D__DEBUG__
+CC       = gcc.exe -D__DEBUG__
+WINDRES  = windres.exe
+OBJ      = main.o User.o Doctor.o Admin.o UserManager.o Patient.o Tool.o Ctrl.o Button.o Edit.o Label.o Table.o Window.o InitWin.o RegisterWin.o ComoboBoxWin.o LoginWin.o WindowManager.o AdminWin.o DoctorWin.o PatientWin.o UserInquiryWin.o PopWin.o DoctorInquiryWin.o AddDoctorWin.o Department.o DepartmentManager.o DepartmentInquiryWin.o PatientPerWin.o PatientUpdateWin.o PatientResetPasswordWin.o AppointmentManageWin.o Workdate.o AppointmentWin.o Appointment.o AppointmentManager.o TakeNumWin.o
+LINKOBJ  = main.o User.o Doctor.o Admin.o UserManager.o Patient.o Tool.o Ctrl.o Button.o Edit.o Label.o Table.o Window.o InitWin.o RegisterWin.o ComoboBoxWin.o LoginWin.o WindowManager.o AdminWin.o DoctorWin.o PatientWin.o UserInquiryWin.o PopWin.o DoctorInquiryWin.o AddDoctorWin.o Department.o DepartmentManager.o DepartmentInquiryWin.o PatientPerWin.o PatientUpdateWin.o PatientResetPasswordWin.o AppointmentManageWin.o Workdate.o AppointmentWin.o Appointment.o AppointmentManager.o TakeNumWin.o
+LIBS     = -L"D:/DevCpp511/MinGW64/lib" -L"D:/DevCpp511/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g3
+INCS     = -I"D:/DevCpp511/MinGW64/include" -I"D:/DevCpp511/MinGW64/x86_64-w64-mingw32/include" -I"D:/DevCpp511/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
+CXXINCS  = -I"D:/DevCpp511/MinGW64/include" -I"D:/DevCpp511/MinGW64/x86_64-w64-mingw32/include" -I"D:/DevCpp511/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"D:/DevCpp511/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
+BIN      = Outpatient_Appointment.exe
+CXXFLAGS = $(CXXINCS) -g3
+CFLAGS   = $(INCS) -g3
+RM       = rm.exe -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o $(BIN) $(LIBS)
+
+main.o: main.cpp
+	$(CPP) -c main.cpp -o main.o $(CXXFLAGS)
+
+User.o: User.cpp
+	$(CPP) -c User.cpp -o User.o $(CXXFLAGS)
+
+Doctor.o: Doctor.cpp
+	$(CPP) -c Doctor.cpp -o Doctor.o $(CXXFLAGS)
+
+Admin.o: Admin.cpp
+	$(CPP) -c Admin.cpp -o Admin.o $(CXXFLAGS)
+
+UserManager.o: UserManager.cpp
+	$(CPP) -c UserManager.cpp -o UserManager.o $(CXXFLAGS)
+
+Patient.o: Patient.cpp
+	$(CPP) -c Patient.cpp -o Patient.o $(CXXFLAGS)
+
+Tool.o: Tool.cpp
+	$(CPP) -c Tool.cpp -o Tool.o $(CXXFLAGS)
+
+Ctrl.o: Ctrl.cpp
+	$(CPP) -c Ctrl.cpp -o Ctrl.o $(CXXFLAGS)
+
+Button.o: Button.cpp
+	$(CPP) -c Button.cpp -o Button.o $(CXXFLAGS)
+
+Edit.o: Edit.cpp
+	$(CPP) -c Edit.cpp -o Edit.o $(CXXFLAGS)
+
+Label.o: Label.cpp
+	$(CPP) -c Label.cpp -o Label.o $(CXXFLAGS)
+
+Table.o: Table.cpp
+	$(CPP) -c Table.cpp -o Table.o $(CXXFLAGS)
+
+Window.o: Window.cpp
+	$(CPP) -c Window.cpp -o Window.o $(CXXFLAGS)
+
+InitWin.o: InitWin.cpp
+	$(CPP) -c InitWin.cpp -o InitWin.o $(CXXFLAGS)
+
+RegisterWin.o: RegisterWin.cpp
+	$(CPP) -c RegisterWin.cpp -o RegisterWin.o $(CXXFLAGS)
+
+ComoboBoxWin.o: ComoboBoxWin.cpp
+	$(CPP) -c ComoboBoxWin.cpp -o ComoboBoxWin.o $(CXXFLAGS)
+
+LoginWin.o: LoginWin.cpp
+	$(CPP) -c LoginWin.cpp -o LoginWin.o $(CXXFLAGS)
+
+WindowManager.o: WindowManager.cpp
+	$(CPP) -c WindowManager.cpp -o WindowManager.o $(CXXFLAGS)
+
+AdminWin.o: AdminWin.cpp
+	$(CPP) -c AdminWin.cpp -o AdminWin.o $(CXXFLAGS)
+
+DoctorWin.o: DoctorWin.cpp
+	$(CPP) -c DoctorWin.cpp -o DoctorWin.o $(CXXFLAGS)
+
+PatientWin.o: PatientWin.cpp
+	$(CPP) -c PatientWin.cpp -o PatientWin.o $(CXXFLAGS)
+
+UserInquiryWin.o: UserInquiryWin.cpp
+	$(CPP) -c UserInquiryWin.cpp -o UserInquiryWin.o $(CXXFLAGS)
+
+PopWin.o: PopWin.cpp
+	$(CPP) -c PopWin.cpp -o PopWin.o $(CXXFLAGS)
+
+DoctorInquiryWin.o: DoctorInquiryWin.cpp
+	$(CPP) -c DoctorInquiryWin.cpp -o DoctorInquiryWin.o $(CXXFLAGS)
+
+AddDoctorWin.o: AddDoctorWin.cpp
+	$(CPP) -c AddDoctorWin.cpp -o AddDoctorWin.o $(CXXFLAGS)
+
+Department.o: Department.cpp
+	$(CPP) -c Department.cpp -o Department.o $(CXXFLAGS)
+
+DepartmentManager.o: DepartmentManager.cpp
+	$(CPP) -c DepartmentManager.cpp -o DepartmentManager.o $(CXXFLAGS)
+
+DepartmentInquiryWin.o: DepartmentInquiryWin.cpp
+	$(CPP) -c DepartmentInquiryWin.cpp -o DepartmentInquiryWin.o $(CXXFLAGS)
+
+PatientPerWin.o: PatientPerWin.cpp
+	$(CPP) -c PatientPerWin.cpp -o PatientPerWin.o $(CXXFLAGS)
+
+PatientUpdateWin.o: PatientUpdateWin.cpp
+	$(CPP) -c PatientUpdateWin.cpp -o PatientUpdateWin.o $(CXXFLAGS)
+
+PatientResetPasswordWin.o: PatientResetPasswordWin.cpp
+	$(CPP) -c PatientResetPasswordWin.cpp -o PatientResetPasswordWin.o $(CXXFLAGS)
+
+AppointmentManageWin.o: AppointmentManageWin.cpp
+	$(CPP) -c AppointmentManageWin.cpp -o AppointmentManageWin.o $(CXXFLAGS)
+
+Workdate.o: Workdate.cpp
+	$(CPP) -c Workdate.cpp -o Workdate.o $(CXXFLAGS)
+
+AppointmentWin.o: AppointmentWin.cpp
+	$(CPP) -c AppointmentWin.cpp -o AppointmentWin.o $(CXXFLAGS)
+
+Appointment.o: Appointment.cpp
+	$(CPP) -c Appointment.cpp -o Appointment.o $(CXXFLAGS)
+
+AppointmentManager.o: AppointmentManager.cpp
+	$(CPP) -c AppointmentManager.cpp -o AppointmentManager.o $(CXXFLAGS)
+
+TakeNumWin.o: TakeNumWin.cpp
+	$(CPP) -c TakeNumWin.cpp -o TakeNumWin.o $(CXXFLAGS)
