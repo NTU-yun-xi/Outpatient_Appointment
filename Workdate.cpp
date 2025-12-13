@@ -10,8 +10,8 @@ Workdate::Workdate()
         tempTm.tm_mday += i+1;
         mktime(&tempTm);
         char buf[20];
-        // 格式化为"XXXX年XX月XX日"
-        sprintf(buf, "%04d年%02d月%02d日", 
+        // 格式化为"XXXX-XX-XX"
+        sprintf(buf, "%04d-%02d-%02d", 
                 tempTm.tm_year + 1900, 
                 tempTm.tm_mon + 1, 
                 tempTm.tm_mday);

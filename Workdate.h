@@ -18,7 +18,7 @@ public:
 	void SaveToFile(ofstream& file);
 	vector<string> GetSevenDays();
 private:
-	vector<std::string> sevenDays;
+	vector<string> sevenDays;
 	
 };
 

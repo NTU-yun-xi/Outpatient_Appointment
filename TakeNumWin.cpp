@@ -66,35 +66,55 @@ TakeNumWin::~TakeNumWin()
 //获取显示预约记录（就诊状态为0-未就诊 或 2-已取消 ——即过滤1、3） 
 vector<Appointment*> TakeNumWin::setcurrentapps()
 {
-	vector<Appointment*> displayapps = AppointmentManager::getInstance();
+	vector<Appointment*> allapps = AppointmentManager::getInstance()->getallAppointments();
+	vector<Appointment*>::iterator iter = allapps.begin();
+	vector<Appointment*> displayapps;
 	string startday = ((Edit*)edit1)->GetContext();
 	string endday = ((Edit*)edit2)->GetContext();
-	//找"./data/day/days.txt"中有没有startday到endday的时间
-	// "./data/day/days.txt"内容格式： 1 2025年12月14日（换行） 2 2025年12月15日...共7天 
-	//如果有匹配的日期，再找所有的"./data/appointments/医生ID（例：D1001、D1002）.txt" 
-	//"./data/appointments/医生ID（例：D1001、D1002）.txt"内容格式：1（1-7对应day） 1（1-12对应time） 用户账号（例：12345678912） 医生ID（D1001与该文件名保持一致） 预约描述 就诊记录（初始为*） 就诊状态 
-	//"./data/time/times.txt"内容： 1 9:00-10:00 1
-	/*								2 9:00-10:00 2
-									3 10:00-11:00 1
-									4 10:00-11:00 2
-									5 11:00-12:00 1
-									6 11:00-12:00 2
-									7 13:00-14:00 1
-									8 13:00-14:00 2
-									9 14:00-15:00 1
-									10 14:00-15:00 2
-									11 15:00-16:00 1
-									12 15:00-16:00 2
-	*/
+	Workdate workdate; // 创建实例
+	vector<string> sevendays = workdate.GetSevenDays(); // 通过实例调用
+	int startIdx = -1, endIdx = -1;
+	for (int i = 0; i < 7; ++i) {
+        if (startday == sevendays[i]) {
+            startIdx = i;
+        }
+        if (endday == sevendays[i]) {
+            endIdx = i;
+        }
+    }
+    
+    bool dateValid = (startIdx != -1 && endIdx != -1 && startIdx <= endIdx);
+	for (iter = allapps.begin(); iter != allapps.end(); ++iter) {
+        Appointment* app = *iter; 
+        if (app == NULL) { 
+            continue;
+        }
+		
+        // 状态筛选：只保留0（未就诊）或2（已取消） 
+        bool stateValid = (app->getState() == 0 || app->getState() == 2);
+        if (!stateValid) {
+            continue;
+        }
+		if(startday.empty() || endday.empty() || dateValid == false)
+		{
+			displayapps.push_back(app);
+		}else if (dateValid) 
+		{
+            int appDay = app->getDay(); // 1-7
+            int appIdx = appDay - 1; // 转换为0-6索引
+            if (appIdx < startIdx || appIdx > endIdx) {
+                continue;
+            }
+        	displayapps.push_back(app);
+        }
+    }
+    
+	return displayapps;
 }
 
 //绘制窗体 
 void TakeNumWin::paintWindow()
-{
-	int num = //获取当前表单中未就诊且时间在btn2-4所选项时间之前的人数 
-	string pop1Title = "提示：当前排队人数："+num+"人"; 
-	this->pop1->setTitle(pop1Title);
-	
+{	
 	dynamic_cast<Button*>(this->btn2)->setShowMode(1);
 	dynamic_cast<Button*>(this->btn3)->setShowMode(1);
 	dynamic_cast<Button*>(this->btn4)->setShowMode(1);
@@ -135,20 +155,19 @@ void TakeNumWin::paintWindow()
     Tool::gotoxy(94, 11);
     cout << "就诊状态";
     
-    vector<Appointment*> apps = this->setcurrentapps();
-	int appcount = apps.size();
+	int appcount = this->showapps.size();
 	
 	// 计算总页数
-    if (doctorCount == 0)
+    if (appcount == 0)
     {
         this->total_pages = 1;
         this->current_page = 1;
     }
     else
     {
-        this->total_pages = (doctorCount % this->PAGE_SIZE == 0) 
-            ? (doctorCount / this->PAGE_SIZE) 
-            : (doctorCount / this->PAGE_SIZE + 1);
+        this->total_pages = (appcount % this->PAGE_SIZE == 0) 
+            ? (appcount / this->PAGE_SIZE) 
+            : (appcount / this->PAGE_SIZE + 1);
     }
     
     // 边界处理
@@ -166,17 +185,17 @@ void TakeNumWin::paintWindow()
     int displayCount = 0;
     for (int i = this->index; i < appcount && displayCount < this->PAGE_SIZE; i++)
     {
-        Appointment* app = apps[i];
+        Appointment* app = this->showapps[i];
         int rowY = 11 + 2 * (displayCount + 1);  
 
         Tool::gotoxy(26, rowY);
         cout << i+1;
 
         Tool::gotoxy(37, rowY);
-        cout << app->getDay();
+        cout << //app->getDay()获取的是日期编号，可通过WorkDate类的vector容器获取对应时间 
 
         Tool::gotoxy(48, rowY);
-        cout << app->getTime();
+        cout << //app->getTime()获取的是时间段编号 ，可通过AppointmentManager类获取对应时间段 
 
         Tool::gotoxy(59, rowY);
         cout << "省立医院";
@@ -210,21 +229,26 @@ int TakeNumWin::doAction()
 	switch(this->flag)
 	{
 		case 5:
-			//执行查询
-		case 6-8:
-			//更具所在行数据弹出弹窗
+			this->doCheck();
+			this->clearEdits();
+			return 15;
+		case 6:
+		case 7:
+		case 8:
+			return this->doPop();
 		case 9:
-			//返回
 		case -1:
-			//返回
+			this->clearEdits();
+			return 14;
 		default:
-			//当前页面 
+			return 15; 
 	}
 }
 
 void TakeNumWin::clearEdits()
 {
-	
+	((Edit*)this->edit1)->SetContext("");
+	((Edit*)this->edit2)->SetContext("");
 }
 
 void TakeNumWin::prevPage()
@@ -259,6 +283,83 @@ void TakeNumWin::nextPage()
 //查询，按照输入的startday和endday执行setcurrentDoctors获取需要 显示的数据记录 
 int TakeNumWin::doCheck()
 {
-	
+	this->showapps = this->setcurrentapps();
 }
 
+int TakeNumWin::doPop()
+{
+	int rowIndex = this->flag - 6;
+	
+	vector<Appointment*> apps = this->setcurrentapps();
+	vector<Appointment*>::iterator iter = apps.begin(); 
+	int globalIndex = this->index + rowIndex;
+	if(globalIndex < 0 || globalIndex >= (int)apps.size())
+	{
+		return 15;
+	}
+	
+	Appointment* targetApp  = apps[globalIndex];
+	if(targetApp == NULL)
+	{
+		return 15;
+	}
+
+	int num = 0;
+	for(iter; iter != apps.end(); ++iter)
+	{
+		Appointment* app = *iter;
+		if(app == NULL) continue;
+        
+        // 条件1：仅统计状态为0（未就诊）的预约
+        if(app->getState() != 0)
+        {
+            continue;
+        }
+        
+        // 条件2：时间在当前选中预约之前
+        int targetDay = targetApp->getDay();
+        int targetTime = targetApp->getTime();
+        int currDay = app->getDay();
+        int currTime = app->getTime();
+        
+        if(currDay < targetDay)
+        {
+            num++; // 日期更早，计入排队
+        }
+        else if(currDay == targetDay)
+        {
+            if(currTime < targetTime)
+            {
+                num++; // 日期相同，时间更早，计入排队
+            }
+        }
+	}
+	string pop1Title = "提示：当前排队人数：" + to_string(num) + "人";
+    this->pop1->setTitle(const_cast<char*>(pop1Title.c_str()));
+    
+    vector<Ctrl*>* popCtrls = this->pop1->getCtrls();
+    int popRes;
+    while(true)
+    {
+    	this->pop1->paintWindow();
+    	this->pop1->winRun();
+    	popRes = this->pop1->getResult();
+    	if(popRes == 0)
+    	{
+    		targetApp->setState(1);
+    		string doctorId = targetApp->getDoctorId();
+            AppointmentManager::getInstance()->saveAppointments(doctorId, apps);
+            break;
+		}else if(popRes == 1)
+		{
+			targetApp->setState(2);
+			string doctorId = targetApp->getDoctorId();
+            AppointmentManager::getInstance()->saveAppointments(doctorId, apps);
+            break;
+		}else if(popRes == 2)
+		{
+			break;
+		} 
+	}
+	return 15;
+}	

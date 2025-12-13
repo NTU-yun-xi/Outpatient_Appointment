@@ -212,3 +212,63 @@ bool AppointmentManager::checkPatientAppointmented(string patientId, int day)
     return false;  // 无重复预约
 }
 
+vector<Appointment*> AppointmentManager::getallAppointments()
+{
+	vector<Appointment*> allApps;
+    string dirPath = "./data/appointments/";
+    TCHAR searchPath[MAX_PATH];
+    _stprintf_s(searchPath, MAX_PATH, _T("%s*.txt"), dirPath.c_str());
+
+    WIN32_FIND_DATA findData;
+    HANDLE hFind = FindFirstFile(searchPath, &findData);
+    if (hFind == INVALID_HANDLE_VALUE)
+    {
+        cout << "无法打开目录: " << dirPath << endl;
+        return allApps;
+    }
+
+    do
+    {
+        if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+            continue;  // 跳过目录
+
+        string fileName = findData.cFileName;
+        // 提取医生ID
+        string doctorId = fileName.substr(0, fileName.find_last_of("."));
+
+        // 加载预约并转换为指针
+        vector<Appointment> apps = loadAppointments(doctorId);
+        for (const auto& app : apps)
+        {
+            allApps.push_back(new Appointment(app));
+        }
+    } while (FindNextFile(hFind, &findData) != 0);
+
+    FindClose(hFind);
+    return allApps;
+}
+
+void AppointmentManager::saveAppointments(const string& doctorId, const vector<Appointment*>& apps)
+{
+    string filePath = "./data/appointments/" + doctorId + ".txt";
+    ofstream outFile(filePath, ios::trunc); // 覆盖写入
+    if (!outFile.is_open())
+    {
+        cerr << "无法打开预约文件：" << filePath << endl;
+        return;
+    }
+    
+    // 按文件格式写入（参考setcurrentapps注释：ID 星期 时间 患者ID 医生ID 状态...）
+    for (size_t i = 0; i < apps.size(); ++i)
+    {
+        Appointment* app = apps[i];
+        if (app == NULL) continue;
+        outFile << i+1 << " " 
+                << app->getDay() << " " 
+                << app->getTime() << " " 
+                << app->getPatientId() << " " 
+                << app->getDoctorId() << " " 
+                << app->getState() << endl;
+    }
+    outFile.close();
+}
