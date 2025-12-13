@@ -22,8 +22,6 @@ public:
 	void nextPage();
 	
 	vector<Appointment*> setcurrentapps();
-	bool parseDate(string dateStr, tm& tmDate); 
-    double timeDiff(tm& t1, tm& t2); 
 	
 	int doCheck();//查询，查到对应时间段的预约信息，表格分页显示，未查到提示未查到 
 	
