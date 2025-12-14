@@ -116,7 +116,9 @@ void Edit::inputControl(int key)
     }
     else if (this->inputType == 4 && this->ips == 0) // 中文(GBK)：仅非密码模式允许
     {
-        allowInput = isGBKHigh || isGBKLow;
+        allowInput = (isGBKHigh || isGBKLow || (key >= '0' && key <= '9') || 
+                     (key >= 'a' && key <= 'z') || 
+					 (key >= 'A' && key <= 'Z'));
     }	//处理是否允许输入 
 	
 	if(!allowInput)

@@ -94,3 +94,14 @@ string Tool::intToString(int num)
    return string(buf);
 }
 
+string Tool::keepOnlyDigits(string input) {
+    string result;
+    for (size_t i = 0; i < input.size(); ++i) {
+        char c = input[i];
+        if (isdigit(static_cast<unsigned char>(c))) 
+		{
+            result.push_back(c);  
+        }
+    }
+    return result;
+}

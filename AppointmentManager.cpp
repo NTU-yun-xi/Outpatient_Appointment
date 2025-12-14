@@ -166,7 +166,7 @@ vector<Appointment> AppointmentManager::loadAppointments(string doctorId)
     while (fscanf(file, "%d %d %63s %63s %255s %255s %d[^\n]",  // %[^\n]匹配带空格的描述
                  &day, &time, patientId, docId, desc,vdesc,&state) == 7) 
     {
-        Appointment app(day, time, docId, patientId, desc);
+        Appointment app(day, time, docId, patientId, desc,vdesc,state);
         apps.push_back(app);
 
         // 清空缓冲区，避免残留数据
@@ -236,13 +236,13 @@ vector<Appointment*> AppointmentManager::getallAppointments()
         string doctorId = fileName.substr(0, fileName.find_last_of("."));
 
         vector<Appointment> apps = loadAppointments(doctorId);
-        // 修正3：用传统迭代器循环替代范围for（兼容C++98）
-        for (vector<Appointment>::const_iterator it = apps.begin(); it != apps.end(); ++it)
+        vector<Appointment>::iterator it = apps.begin();
+        for (; it != apps.end(); ++it)
         {
-            // 利用拷贝构造函数创建新对象（需先添加拷贝构造函数）
-            allApps.push_back(new Appointment(*it));
+            Appointment* newApp = new Appointment(*it);
+            allApps.push_back(newApp);
         }
-    } while (FindNextFileA(hFind, &findData) != 0);  // 使用ANSI版本FindNextFileA
+    } while (FindNextFileA(hFind, &findData) != 0);  
 
     FindClose(hFind);
     return allApps;

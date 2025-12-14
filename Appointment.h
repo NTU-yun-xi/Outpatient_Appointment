@@ -8,7 +8,7 @@ class Appointment
 {
 public:
 	Appointment();
-	Appointment(int day, int time, string doctorId, string patientId, string desc);
+	Appointment(int day, int time, string doctorId, string patientId, string desc,string visitDesc,int state);
 	~Appointment();
 	
 	int getDay();

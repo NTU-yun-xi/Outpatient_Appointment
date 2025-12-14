@@ -4,7 +4,9 @@
 #include <windows.h>
 #include <stdio.h>
 #include <conio.h>
+#include <iostream>
 #include <string>
+#include <cctype>
 using namespace std;
 
 #define KEY_ENTER 13
@@ -21,6 +23,7 @@ public:
 	static void paintBoder(int startX,int startY,int width,int height);
 	static int getkey();
 	static string intToString(int num);
+	static string keepOnlyDigits(string input);
 };
 
 #endif

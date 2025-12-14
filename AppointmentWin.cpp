@@ -115,6 +115,7 @@ void AppointmentWin::loadDeptOptions()
 
 void AppointmentWin::loadDayOptions()
 {
+	ofstream file("./data/day/days.txt");
     Workdate workDate;
     vector<string> Days = workDate.GetSevenDays();
     int colCount = 3;          // 每行显示3个

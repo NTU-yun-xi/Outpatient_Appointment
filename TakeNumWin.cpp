@@ -14,8 +14,8 @@ TakeNumWin::TakeNumWin(int win_startX,int win_startY,int win_width,int win_heigh
 	this->lab1 = new Label(LABEL, 44, 5, 0, 0, "欢迎来到门诊预约管理系统");
     this->lab2 = new Label(LABEL, 20, 8, 0, 0, "输入就诊日期");
     this->lab3 = new Label(LABEL, 52, 8, 0, 0, "至");
-    this->edit1 = new Edit(EDIT, 33, 7, 10, 3, "", 11, 0, 3);
-	this->edit2 = new Edit(EDIT,55,7,10,3,"",11,0,3);  
+    this->edit1 = new Edit(EDIT, 33, 7, 10, 3, "", 8, 0, 3);
+	this->edit2 = new Edit(EDIT,55,7,10,3,"",8,0,3);  
     this->btn1 = new Button(BUTTON, 75, 7, 8, 3, "查询"); 
 	this->btn2 = new Button(BUTTON, 11, 12, 2, 1, "");
 	this->btn3 = new Button(BUTTON, 11, 14, 2, 1, "");
@@ -71,19 +71,32 @@ vector<Appointment*> TakeNumWin::setcurrentapps()
 	vector<Appointment*> displayapps;
 	string startday = ((Edit*)edit1)->GetContext();
 	string endday = ((Edit*)edit2)->GetContext();
-	Workdate workdate; // 创建实例
+	Workdate workdate;
 	vector<string> sevendays = workdate.GetSevenDays(); // 通过实例调用
+	vector<string>::iterator sevenIter = sevendays.begin();
+	vector<string> checkdays;
+	for (sevenIter; sevenIter != sevendays.end(); ++sevenIter) {
+        checkdays.push_back(Tool::keepOnlyDigits(*sevenIter));
+    }
 	int startIdx = -1, endIdx = -1;
 	for (int i = 0; i < 7; ++i) {
-        if (startday == sevendays[i]) {
+        if (startday == checkdays[i]) {
             startIdx = i;
         }
-        if (endday == sevendays[i]) {
+        if (endday == checkdays[i]) {
             endIdx = i;
         }
     }
     
-    bool dateValid = (startIdx != -1 && endIdx != -1 && startIdx <= endIdx);
+    bool dateValid = false;
+    if (startday.empty() && endday.empty()) {
+        dateValid = true;
+    } else if (startIdx != -1 && endIdx != -1 && startIdx <= endIdx) {
+        dateValid = true;
+    } else {
+        return displayapps; 
+    }
+    
 	for (iter = allapps.begin(); iter != allapps.end(); ++iter) {
         Appointment* app = *iter; 
         if (app == NULL) { 
@@ -91,30 +104,37 @@ vector<Appointment*> TakeNumWin::setcurrentapps()
         }
 		
         // 状态筛选：只保留0（未就诊）或2（已取消） 
-        bool stateValid = (app->getState() == 0 || app->getState() == 2);
-        if (!stateValid) {
+        if (app->getState() == 1 || app->getState() == 3) {
             continue;
         }
-		if(startday.empty() || endday.empty() || dateValid == false)
+
+        int appDay = app->getDay();
+        if (appDay < 1 || appDay > 7) {
+            continue;
+        }
+        int appIdx = appDay - 1;
+
+        if (dateValid) 
 		{
-			displayapps.push_back(app);
-		}else if (dateValid) 
-		{
-            int appDay = app->getDay(); // 1-7
-            int appIdx = appDay - 1; // 转换为0-6索引
-            if (appIdx < startIdx || appIdx > endIdx) {
-                continue;
+            if (startday.empty() || endday.empty()) 
+			{
+                displayapps.push_back(app);
+            } else 
+			{
+                if (appIdx >= startIdx && appIdx <= endIdx) 
+				{
+                    displayapps.push_back(app);
+                }
             }
-        	displayapps.push_back(app);
         }
     }
-    
-	return displayapps;
+    return displayapps;
 }
 
 //绘制窗体 
 void TakeNumWin::paintWindow()
 {	
+	this->showapps = this->setcurrentapps();
 	dynamic_cast<Button*>(this->btn2)->setShowMode(1);
 	dynamic_cast<Button*>(this->btn3)->setShowMode(1);
 	dynamic_cast<Button*>(this->btn4)->setShowMode(1);
@@ -282,6 +302,12 @@ int TakeNumWin::doAction()
 {
 	switch(this->flag)
 	{
+		case -100:
+			this->prevPage();
+			return 15;
+		case -101:
+			this->nextPage();
+			return 15;
 		case 5:
 			this->doCheck();
 			this->clearEdits();
@@ -359,7 +385,8 @@ int TakeNumWin::doPop()
 	}
 
 	int num = 0;
-	for(iter; iter != apps.end(); ++iter)
+	vector<Appointment*>::iterator countIter = apps.begin();
+	for(countIter ; countIter  != apps.end(); ++countIter )
 	{
 		Appointment* app = *iter;
 		if(app == NULL) continue;
@@ -402,13 +429,33 @@ int TakeNumWin::doPop()
     	{
     		targetApp->setState(1);
     		string doctorId = targetApp->getDoctorId();
-            AppointmentManager::getInstance()->saveAppointments(doctorId, apps);
+    		vector<Appointment*> thisdocapps;
+    		vector<Appointment*>::iterator saveIter = apps.begin();
+			for(saveIter; saveIter != apps.end(); ++saveIter)
+            {
+                Appointment* app = *saveIter;
+                if(app != NULL && app->getDoctorId() == doctorId)
+                {
+                    thisdocapps.push_back(app); 
+                }
+            }
+            AppointmentManager::getInstance()->saveAppointments(doctorId, thisdocapps);
             break;
 		}else if(popRes == 1)
 		{
 			targetApp->setState(2);
 			string doctorId = targetApp->getDoctorId();
-            AppointmentManager::getInstance()->saveAppointments(doctorId, apps);
+            vector<Appointment*> thisdocapps;
+    		vector<Appointment*>::iterator saveIter = apps.begin();
+			for(saveIter; saveIter != apps.end(); ++saveIter)
+            {
+                Appointment* app = *saveIter;
+                if(app != NULL && app->getDoctorId() == doctorId)
+                {
+                    thisdocapps.push_back(app); 
+                }
+            }
+            AppointmentManager::getInstance()->saveAppointments(doctorId, thisdocapps);
             break;
 		}else if(popRes == 2)
 		{

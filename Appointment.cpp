@@ -11,15 +11,15 @@ Appointment::Appointment()
 	this->state = 0; 
 }
 
-Appointment::Appointment(int day, int time, string doctorId, string patientId, string desc)
+Appointment::Appointment(int day, int time, string doctorId, string patientId, string desc,string visitDesc,int state)
 {
 	this->day = day;
 	this->time = time;
 	this->doctorId = doctorId;
 	this->patientId = patientId;
 	this->desc = desc;
-	this->visitDesc = "*";
-	this->state = 0;
+	this->visitDesc = visitDesc;
+	this->state = state;
 }
 
 Appointment::~Appointment()
