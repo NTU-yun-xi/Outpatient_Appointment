@@ -14,10 +14,10 @@ VisitRecordWin::VisitRecordWin(int win_startX, int win_startY, int win_width, in
 	this->lab3 = new Label(LABEL,39,8,0,0,"");
 	this->lab4 = new Label(LABEL,30,11,0,0,"预约描述");
 	this->lab5 = new Label(LABEL,30,16,0,0,"就诊描述"); 
-	this->edit1 = new Edit(EDIT,39,10,5,4,"",10,0,4);
-	this->edit2 = new Edit(EDIT,39,15,5,4,"",10,0,4);
-	this->btn1 = new Button(BUTTON,30,20,4,3,"确认");
-	this->btn2 = new Button(BUTTON,40,20,4,3,"返回"); 
+	this->edit1 = new Edit(EDIT,39,10,20,4,"",10,0,4);
+	this->edit2 = new Edit(EDIT,39,15,20,4,"",10,0,4);
+	this->btn1 = new Button(BUTTON,30,20,8,3,"确认");
+	this->btn2 = new Button(BUTTON,40,20,8,3,"返回"); 
 	
 	this->addControl(this->lab1);
 	this->addControl(this->lab2);
@@ -50,6 +50,7 @@ void VisitRecordWin::paintWindow()
 {
 	this->lab3->SetContext(this->currentAppointment->getPatientId());
 	this->edit1->SetContext(this->currentAppointment->getDesc());
+	this->edit2->SetContext(this->currentAppointment->getVisitDesc());
 	Window::paintWindow();
 	BaseUser* user = this->GetCurrentUser();
 	if(user != NULL)
@@ -90,8 +91,28 @@ void VisitRecordWin::clearEdits()
 
 void VisitRecordWin::saveVisitRecord()
 {
-	this->currentAppointment->setVisitDesc((Edit*)this->edit2->GetContext());
-	
+	vector<Appointment*> apps = AppointmentManager::getInstance()->getallAppointments();
+	this->currentAppointment->setVisitDesc(this->edit2->GetContext());
+	this->currentAppointment->setState(3);
+	string doctorId = this->currentAppointment->getDoctorId();
+	vector<Appointment*> thisdocapps;
+	vector<Appointment*>::iterator saveIter = apps.begin();
+	for(saveIter; saveIter != apps.end(); ++saveIter)
+    {
+        Appointment* app = *saveIter;
+        if(app != NULL && app->getDoctorId() == doctorId)
+        {
+        	if(app->getDay() == this->currentAppointment->getDay() && app->getTime() == this->currentAppointment->getTime())
+			{
+				thisdocapps.push_back(this->currentAppointment);
+			}
+			else
+			{
+				thisdocapps.push_back(app); 
+			} 
+        }
+    }
+    AppointmentManager::getInstance()->saveAppointments(doctorId, thisdocapps);
 }
 
 void VisitRecordWin::setAppointment(Appointment* app)
