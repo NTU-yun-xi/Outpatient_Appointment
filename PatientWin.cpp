@@ -69,7 +69,7 @@ int PatientWin::doAction()
 		case 2:
 			return 13;
 		case 3:
-			return 5;
+			return 15;
 		case 4:
 			return 5;
 		case 5:

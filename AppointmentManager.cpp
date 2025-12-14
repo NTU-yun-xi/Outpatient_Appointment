@@ -216,11 +216,11 @@ vector<Appointment*> AppointmentManager::getallAppointments()
 {
 	vector<Appointment*> allApps;
     string dirPath = "./data/appointments/";
-    TCHAR searchPath[MAX_PATH];
-    _stprintf_s(searchPath, MAX_PATH, _T("%s*.txt"), dirPath.c_str());
+    char searchPath[MAX_PATH];
+    sprintf(searchPath, "%s*.txt", dirPath.c_str());
 
     WIN32_FIND_DATA findData;
-    HANDLE hFind = FindFirstFile(searchPath, &findData);
+    HANDLE hFind = FindFirstFileA(searchPath, &findData);
     if (hFind == INVALID_HANDLE_VALUE)
     {
         cout << "无法打开目录: " << dirPath << endl;
@@ -233,16 +233,16 @@ vector<Appointment*> AppointmentManager::getallAppointments()
             continue;  // 跳过目录
 
         string fileName = findData.cFileName;
-        // 提取医生ID
         string doctorId = fileName.substr(0, fileName.find_last_of("."));
 
-        // 加载预约并转换为指针
         vector<Appointment> apps = loadAppointments(doctorId);
-        for (const auto& app : apps)
+        // 修正3：用传统迭代器循环替代范围for（兼容C++98）
+        for (vector<Appointment>::const_iterator it = apps.begin(); it != apps.end(); ++it)
         {
-            allApps.push_back(new Appointment(app));
+            // 利用拷贝构造函数创建新对象（需先添加拷贝构造函数）
+            allApps.push_back(new Appointment(*it));
         }
-    } while (FindNextFile(hFind, &findData) != 0);
+    } while (FindNextFileA(hFind, &findData) != 0);  // 使用ANSI版本FindNextFileA
 
     FindClose(hFind);
     return allApps;
@@ -251,23 +251,23 @@ vector<Appointment*> AppointmentManager::getallAppointments()
 void AppointmentManager::saveAppointments(const string& doctorId, const vector<Appointment*>& apps)
 {
     string filePath = "./data/appointments/" + doctorId + ".txt";
-    ofstream outFile(filePath, ios::trunc); // 覆盖写入
+    ofstream outFile(filePath.c_str(), ios::trunc); // 覆盖写入
     if (!outFile.is_open())
     {
         cerr << "无法打开预约文件：" << filePath << endl;
         return;
     }
     
-    // 按文件格式写入（参考setcurrentapps注释：ID 星期 时间 患者ID 医生ID 状态...）
     for (size_t i = 0; i < apps.size(); ++i)
     {
         Appointment* app = apps[i];
         if (app == NULL) continue;
-        outFile << i+1 << " " 
-                << app->getDay() << " " 
+        outFile << app->getDay() << " " 
                 << app->getTime() << " " 
-                << app->getPatientId() << " " 
-                << app->getDoctorId() << " " 
+                << app->getPatientId().c_str() << " " 
+                << app->getDoctorId().c_str() << " " 
+                << app->getDesc().c_str() << " " 
+                << app->getVisitDesc().c_str() << " " 
                 << app->getState() << endl;
     }
     outFile.close();

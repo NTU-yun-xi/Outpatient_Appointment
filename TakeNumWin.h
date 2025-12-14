@@ -5,7 +5,7 @@
 #include "PopWin.h"
 #include "Appointment.h"
 #include "AppointmentManager.h"
-#include "Workdata.h"
+#include "Workdate.h"
 
 class TakeNumWin:public Window
 {

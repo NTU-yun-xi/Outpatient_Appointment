@@ -12,19 +12,19 @@ TakeNumWin::TakeNumWin(int win_startX,int win_startY,int win_width,int win_heigh
 : Window(win_startX, win_startY, win_width, win_height)
 {
 	this->lab1 = new Label(LABEL, 44, 5, 0, 0, "欢迎来到门诊预约管理系统");
-    this->lab2 = new Label(LABEL, 30, 8, 0, 0, "输入就诊日期");
-    this->lab3 = new Label(LABEL, 50, 8, 0, 0, "至");
-    this->edit1 = new Edit(EDIT, 45, 7, 10, 3, "", 11, 0, 3);
+    this->lab2 = new Label(LABEL, 20, 8, 0, 0, "输入就诊日期");
+    this->lab3 = new Label(LABEL, 52, 8, 0, 0, "至");
+    this->edit1 = new Edit(EDIT, 33, 7, 10, 3, "", 11, 0, 3);
 	this->edit2 = new Edit(EDIT,55,7,10,3,"",11,0,3);  
     this->btn1 = new Button(BUTTON, 75, 7, 8, 3, "查询"); 
-	this->btn2 = new Button(BUTTON, 20, 12, 2, 1, "");
-	this->btn3 = new Button(BUTTON, 20, 14, 2, 1, "");
-	this->btn4 = new Button(BUTTON, 20, 16, 2, 1, "");
+	this->btn2 = new Button(BUTTON, 11, 12, 2, 1, "");
+	this->btn3 = new Button(BUTTON, 11, 14, 2, 1, "");
+	this->btn4 = new Button(BUTTON, 11, 16, 2, 1, "");
 	dynamic_cast<Button*>(this->btn2)->setShowMode(1);
 	dynamic_cast<Button*>(this->btn3)->setShowMode(1);
 	dynamic_cast<Button*>(this->btn4)->setShowMode(1);
 	this->btn5 = new Button(BUTTON,30,22,8,3,"返回");
-	this->table = new Table(TABLE,25,10,0,0,"",7,this->PAGE_SIZE+1,5,1);
+	this->table = new Table(TABLE,16,10,0,0,"",7,this->PAGE_SIZE+1,6,1);
 	
 	this->addControl(this->lab1);
 	this->addControl(this->lab2);
@@ -140,19 +140,19 @@ void TakeNumWin::paintWindow()
 	Tool::gotoxy(60,23);
 	cout<<"按↑↓键选择数据";
 	
-	Tool::gotoxy(28, 11);
+	Tool::gotoxy(19, 11);
 	cout << "预约编号";
-    Tool::gotoxy(38, 11);
+    Tool::gotoxy(32, 11);
     cout << "预约时间";
-    Tool::gotoxy(51, 11);
+    Tool::gotoxy(43, 11);
     cout << "预约就诊时间";
-    Tool::gotoxy(60, 11);
+    Tool::gotoxy(58, 11);
     cout << "预约医院";
     Tool::gotoxy(71, 11);
     cout << "预约科室";
     Tool::gotoxy(84, 11);
     cout << "预约医生";
-    Tool::gotoxy(94, 11);
+    Tool::gotoxy(96, 11);
     cout << "就诊状态";
     
 	int appcount = this->showapps.size();
@@ -188,25 +188,79 @@ void TakeNumWin::paintWindow()
         Appointment* app = this->showapps[i];
         int rowY = 11 + 2 * (displayCount + 1);  
 
-        Tool::gotoxy(26, rowY);
+        Tool::gotoxy(23, rowY);
         cout << i+1;
 
-        Tool::gotoxy(37, rowY);
-        cout << //app->getDay()获取的是日期编号，可通过WorkDate类的vector容器获取对应时间 
+        Tool::gotoxy(31, rowY);
+        Workdate workDate;
+    	vector<string> allDays = workDate.GetSevenDays();
+        int dayIndex = app->getDay() - 1;
+		cout<< allDays[dayIndex]; 
 
-        Tool::gotoxy(48, rowY);
-        cout << //app->getTime()获取的是时间段编号 ，可通过AppointmentManager类获取对应时间段 
+        Tool::gotoxy(44, rowY);
+        string timeSlot = "";
+        // 修正：声明文件流、行变量和字符串流（C++98 需在块开头声明）
+        ifstream timeFile;       // 声明timeFile
+        string line;             // 声明line
+        istringstream iss;       // 声明iss
 
-        Tool::gotoxy(59, rowY);
+        timeFile.open("./data/time/times.txt");
+        if (timeFile.is_open())
+        {
+            while (getline(timeFile, line))
+            {
+                iss.clear();      // 清空流状态
+                iss.str(line);    // 绑定当前行
+                int id = 0;
+                string timeStr = "";
+                string num = "";
+                if (iss >> id >> timeStr >> num && id == app->getTime())
+                {
+                    timeSlot = timeStr;
+                    break;
+                }
+            }
+            timeFile.close();
+        }
+        if (timeSlot.empty())
+        {
+            cout << "未知时段";
+        }
+        else
+        {
+            cout << timeSlot;
+        }
+
+
+        Tool::gotoxy(58, rowY);
         cout << "省立医院";
 
-        Tool::gotoxy(70, rowY);
-        cout << //app->getDoctorId()获取医生ID,通过用户管理器 的map容器获取 医生科室 
+        Tool::gotoxy(71, rowY);
+        BaseUser* baseUser = UserManager::GetOusermanager()->findUser(app->getDoctorId()); 
+        Doctor* doctor = NULL;
+		if (baseUser != NULL && baseUser->GetRole() == 2) { // 角色2为医生（根据代码逻辑）
+		    doctor = dynamic_cast<Doctor*>(baseUser);
+		}
+		if (doctor != NULL) 
+        {
+            cout << doctor->GetDepartment(); 
+        }
+        else
+        {
+            cout << "未知科室";
+        }
 
-        Tool::gotoxy(81, rowY);
-        cout << //app->getDoctorId()获取医生ID,通过用户管理器 的map容器获取 医生姓名 
+        Tool::gotoxy(84, rowY);
+        if (doctor != NULL)
+        {
+            cout << doctor->GetName();
+        }
+        else
+        {
+            cout << "未知医生";
+        }
         
-        Tool::gotoxy(91,rowY);
+        Tool::gotoxy(96,rowY);
         if(app->getState() == 0)
         {
         	cout<<"未就诊"; 
@@ -239,7 +293,7 @@ int TakeNumWin::doAction()
 		case 9:
 		case -1:
 			this->clearEdits();
-			return 14;
+			return 5;
 		default:
 			return 15; 
 	}
@@ -267,8 +321,8 @@ void TakeNumWin::prevPage()
 
 void TakeNumWin::nextPage()
 {
-	vector<Doctor*> doctors = this->setcurrentDoctors();
-    if (this->current_page < (doctors.size() + this->PAGE_SIZE - 1) / this->PAGE_SIZE)
+	vector<Appointment*> apps = this->setcurrentapps();
+    if (this->current_page < (apps.size() + this->PAGE_SIZE - 1) / this->PAGE_SIZE)
     {
         this->current_page++;
     }
@@ -334,7 +388,7 @@ int TakeNumWin::doPop()
             }
         }
 	}
-	string pop1Title = "提示：当前排队人数：" + to_string(num) + "人";
+	string pop1Title = "提示：当前排队人数：" + Tool::intToString(num) + "人";
     this->pop1->setTitle(const_cast<char*>(pop1Title.c_str()));
     
     vector<Ctrl*>* popCtrls = this->pop1->getCtrls();

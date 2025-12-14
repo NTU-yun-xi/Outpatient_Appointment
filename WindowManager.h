@@ -16,6 +16,7 @@
 #include "PatientResetPasswordWin.h"
 #include "AppointmentManageWin.h"
 #include "AppointmentWin.h"
+#include "TakeNumWin.h"
 #include "UserManager.h"
 
 #include <stdlib.h>
@@ -67,6 +68,7 @@ private:
 	Window * patientresetpasswordwin;
 	Window * appointmentmanagewin;
 	Window * appointmentwin;
+	Window * takenumwin;
 	Window * winArr[20];
 	int index;
 	
