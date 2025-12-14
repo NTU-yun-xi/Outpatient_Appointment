@@ -26,6 +26,7 @@ public:
 	
 	int doCheck();//查询，查到对应时间段的预约信息，表格分页显示，未查到提示未查到 
 	int doPop();
+	
 private:
 	Ctrl* lab1;//欢迎词
 	Ctrl* lab2;//"输入就诊日期"

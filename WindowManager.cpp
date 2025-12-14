@@ -20,6 +20,7 @@ WindowManager::WindowManager()
 	this->appointmentmanagewin = new AppointmentManageWin(20,5,40,25);
 	this->appointmentwin = new AppointmentWin(20,0,40,30);
 	this->takenumwin = new TakeNumWin(12,5,50,25);
+	this->doctorvisitquerywin = new DoctorVisitQueryWin(20,5,40,25);
 	this->WinInit();
 	this->index = 0;
 	this->currentUser = NULL;
@@ -44,6 +45,7 @@ WindowManager::~WindowManager()
     delete this->appointmentmanagewin;
     delete this->appointmentwin;
     delete this->takenumwin;
+    delete this->doctorvisitquerywin;
     UserManager::DestroyOusermanager();
 }
 
@@ -111,6 +113,7 @@ void WindowManager::WinInit()
 	this->winArr[13] = this->appointmentmanagewin;
 	this->winArr[14] = this->appointmentwin;
 	this->winArr[15] = this->takenumwin;
+	this->winArr[16] = this->doctorvisitquerywin;
 }
 
 void WindowManager::toShow()

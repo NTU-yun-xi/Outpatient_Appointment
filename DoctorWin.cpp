@@ -62,7 +62,7 @@ int DoctorWin::doAction()
 		case 1:
 			return 4;
 		case 2:
-			return 4;
+			return 16;
 		case 3:
 			return 0;
 		case -1:
