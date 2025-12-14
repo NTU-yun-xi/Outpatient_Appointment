@@ -6,7 +6,6 @@ DoctorVisitQueryWin::DoctorVisitQueryWin()
 	this->current_page = 1;
     this->total_pages = 1;
     this->index = 0;
-    this->selctedapp = NULL;
 }
 
 DoctorVisitQueryWin::DoctorVisitQueryWin(int win_startX, int win_startY, int win_width, int win_height)
@@ -30,7 +29,6 @@ DoctorVisitQueryWin::DoctorVisitQueryWin(int win_startX, int win_startY, int win
     this->total_pages = 1;
     this->index = 0;
     
-    this->selctedapp = NULL;
 }
 
 DoctorVisitQueryWin::~DoctorVisitQueryWin()
@@ -41,7 +39,6 @@ DoctorVisitQueryWin::~DoctorVisitQueryWin()
 	delete this->btn3;
 	delete this->btn4;
 	delete this->table;
-	delete this->selctedapp;
 }
 
 void DoctorVisitQueryWin::paintWindow()
@@ -146,7 +143,6 @@ int DoctorVisitQueryWin::doAction()
 		case 2:
 		case 3:
 			this->selctapp(); 
-			this->SetCurrentApp(this->getselectedapp());
 			return 17;
 		case 4:
 			return 4;
@@ -219,14 +215,12 @@ void DoctorVisitQueryWin::selctapp()
 	{
 		return ;
 	}
-	this->selctedapp = this->showVisits[globalIndex];
-	if(this->selctedapp == NULL)
-	{
-		return ;
-	}
-}
-
-Appointment* DoctorVisitQueryWin::getselectedapp()
-{
-	return this->selctedapp;
+	Appointment* selectedApp = this->showVisits[globalIndex];
+    if(selectedApp == NULL)
+    {
+        return ;
+    }
+    this->SetCurrentApp(selectedApp);
+	WindowManager::GetInstance()->UpdateMainApp(this->mainApp); 
+    
 }

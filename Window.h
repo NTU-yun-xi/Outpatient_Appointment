@@ -67,7 +67,7 @@ protected:
 	int flag;
 	Ctrl * arr[30];
 	BaseUser* currentUser; 
-	Appointment* currentApp;
+	Appointment* mainApp;
 };
 
 #endif

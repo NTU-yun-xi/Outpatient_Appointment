@@ -41,7 +41,9 @@ public:
 	
 	void SetCurrentUser(BaseUser* user);
     BaseUser* GetCurrentUser();
+    Appointment* GetMainApp();
     void UpdateCurrentUser(BaseUser* user);
+    void UpdateMainApp(Appointment* app);
     void ClearCurrentUser();
     
     UserManager* GetUserManager();
@@ -77,6 +79,7 @@ private:
 	int index;
 	
 	BaseUser* currentUser;
+	Appointment* mainApp;
 	UserManager* userManager;
 };
 

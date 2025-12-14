@@ -18,8 +18,6 @@ public:
     void clearEdits();
     void saveVisitRecord();
     
-	void setAppointment();
-    
 private:
     Ctrl* lab1;      // 标题
     Ctrl* lab2;      // 用户ID标签
@@ -31,7 +29,6 @@ private:
     Ctrl* btn1;      // 确定按钮
     Ctrl* btn2;      // 返回按钮
     
-    Appointment* currentAppointment;  // 当前就诊记录
 };
 
 #endif

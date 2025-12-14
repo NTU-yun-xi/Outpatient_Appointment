@@ -369,52 +369,43 @@ int TakeNumWin::doCheck()
 int TakeNumWin::doPop()
 {
 	int rowIndex = this->flag - 6;
-	
-	vector<Appointment*> apps = this->setcurrentapps();
-	vector<Appointment*>::iterator iter = apps.begin(); 
-	int globalIndex = this->index + rowIndex;
-	if(globalIndex < 0 || globalIndex >= (int)apps.size())
-	{
-		return 15;
-	}
-	
-	Appointment* targetApp  = apps[globalIndex];
-	if(targetApp == NULL)
-	{
-		return 15;
-	}
+    
+    // 1. 获取所有预约（而非过滤后的），用于完整保存
+    vector<Appointment*> allApps = AppointmentManager::getInstance()->getallAppointments();
+    // 2. 获取过滤后的apps用于定位目标预约
+    vector<Appointment*> filteredApps = this->setcurrentapps();
+    
+    int globalIndex = this->index + rowIndex;
+    if(globalIndex < 0 || globalIndex >= (int)filteredApps.size())
+    {
+        return 15;
+    }
+    
+    Appointment* targetApp = filteredApps[globalIndex];
+    if(targetApp == NULL)
+    {
+        return 15;
+    }
 
-	int num = 0;
-	vector<Appointment*>::iterator countIter = apps.begin();
-	for(countIter ; countIter  != apps.end(); ++countIter )
+    // 计算排队人数（逻辑不变）
+    int num = 0;
+	for (vector<Appointment*>::iterator appIter = allApps.begin(); appIter != allApps.end(); ++appIter)
 	{
-		Appointment* app = *iter;
-		if(app == NULL) continue;
-        
-        // 条件1：仅统计状态为0（未就诊）的预约
-        if(app->getState() != 0)
-        {
-            continue;
-        }
-        
-        // 条件2：时间在当前选中预约之前
-        int targetDay = targetApp->getDay();
-        int targetTime = targetApp->getTime();
-        int currDay = app->getDay();
-        int currTime = app->getTime();
-        
-        if(currDay < targetDay)
-        {
-            num++; // 日期更早，计入排队
-        }
-        else if(currDay == targetDay)
-        {
-            if(currTime < targetTime)
-            {
-                num++; // 日期相同，时间更早，计入排队
-            }
-        }
+	    Appointment* app = *appIter;
+	    if(app == NULL) continue;
+	    if(app->getState() != 0) continue;
+	    
+	    int targetDay = targetApp->getDay();
+	    int targetTime = targetApp->getTime();
+	    int currDay = app->getDay();
+	    int currTime = app->getTime();
+	    
+	    if(currDay < targetDay || (currDay == targetDay && currTime < targetTime))
+	    {
+	        num++;
+	    }
 	}
+		
 	string pop1Title = "提示：当前排队人数：" + Tool::intToString(num) + "人";
     this->pop1->setTitle(const_cast<char*>(pop1Title.c_str()));
     
@@ -422,45 +413,34 @@ int TakeNumWin::doPop()
     int popRes;
     while(true)
     {
-    	this->pop1->paintWindow();
-    	this->pop1->winRun();
-    	popRes = this->pop1->getResult();
-    	if(popRes == 0)
-    	{
-    		targetApp->setState(1);
-    		string doctorId = targetApp->getDoctorId();
-    		vector<Appointment*> thisdocapps;
-    		vector<Appointment*>::iterator saveIter = apps.begin();
-			for(saveIter; saveIter != apps.end(); ++saveIter)
-            {
-                Appointment* app = *saveIter;
-                if(app != NULL && app->getDoctorId() == doctorId)
-                {
-                    thisdocapps.push_back(app); 
-                }
-            }
-            AppointmentManager::getInstance()->saveAppointments(doctorId, thisdocapps);
+        this->pop1->paintWindow();
+        this->pop1->winRun();
+        popRes = this->pop1->getResult();
+        if(popRes == 0) // 取号
+        {
+            targetApp->setState(1);
+        }
+        else if(popRes == 1) // 取消预约
+        {
+            targetApp->setState(2);
+        }
+        else if(popRes == 2) // 返回
+        {
             break;
-		}else if(popRes == 1)
+        }
+        
+        string doctorId = targetApp->getDoctorId();
+		vector<Appointment*> allDocApps;
+		for (vector<Appointment*>::iterator appIter = allApps.begin(); appIter != allApps.end(); ++appIter)
 		{
-			targetApp->setState(2);
-			string doctorId = targetApp->getDoctorId();
-            vector<Appointment*> thisdocapps;
-    		vector<Appointment*>::iterator saveIter = apps.begin();
-			for(saveIter; saveIter != apps.end(); ++saveIter)
-            {
-                Appointment* app = *saveIter;
-                if(app != NULL && app->getDoctorId() == doctorId)
-                {
-                    thisdocapps.push_back(app); 
-                }
-            }
-            AppointmentManager::getInstance()->saveAppointments(doctorId, thisdocapps);
-            break;
-		}else if(popRes == 2)
-		{
-			break;
-		} 
-	}
-	return 15;
+		    Appointment* app = *appIter;
+		    if(app != NULL && app->getDoctorId() == doctorId)
+		    {
+		        allDocApps.push_back(app); 
+		    }
+		}
+		AppointmentManager::getInstance()->saveAppointments(doctorId, allDocApps);
+        break;
+    }
+    return 15;
 }	

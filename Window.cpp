@@ -10,6 +10,7 @@ Window::Window()
 	this->flag = 0;
 	memset(this->arr,0,sizeof(this->arr));
 	this->currentUser = NULL;
+	this->mainApp = NULL;
 }
 Window::Window(int win_startX,int win_startY,int win_width,int win_height)
 {
@@ -21,6 +22,7 @@ Window::Window(int win_startX,int win_startY,int win_width,int win_height)
 	this->flag = 0;
 	memset(this->arr,0,sizeof(this->arr));
 	this->currentUser = NULL;
+	this->mainApp = NULL;
 }
 Window::~Window()
 {
@@ -244,10 +246,10 @@ BaseUser* Window::GetCurrentUser()
 
 void Window::SetCurrentApp(Appointment* app)
 {
-	this->currentApp = app;
+	this->mainApp = app;
 }
 
 Appointment* Window::GetCurrentApp()
 {
-	return this->currentApp;
+	return this->mainApp;
 }

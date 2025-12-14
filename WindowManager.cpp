@@ -25,6 +25,7 @@ WindowManager::WindowManager()
 	this->WinInit();
 	this->index = 0;
 	this->currentUser = NULL;
+	this->mainApp = NULL;
 	this->userManager = UserManager::GetOusermanager();
 }
 
@@ -87,9 +88,19 @@ BaseUser* WindowManager::GetCurrentUser()
     return this->currentUser;
 }
 
+Appointment* WindowManager::GetMainApp()
+{
+	return this->mainApp;
+}
+
 void WindowManager::UpdateCurrentUser(BaseUser* user)
 {
     this->currentUser = user;
+}
+
+void WindowManager::UpdateMainApp(Appointment* app)
+{
+	this->mainApp = app;
 }
 
 void WindowManager::ClearCurrentUser()
@@ -126,6 +137,7 @@ void WindowManager::toShow()
 		system("cls");
 		Window * currentWin = this->winArr[this->index];
 		currentWin->SetCurrentUser(GetCurrentUser());
+		currentWin->SetCurrentApp(GetMainApp());
 		currentWin->paintWindow();
 		currentWin->winRun();
 		this->index = currentWin->doAction();

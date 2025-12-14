@@ -5,6 +5,7 @@
 #include "PopWin.h"
 #include "Appointment.h"
 #include "AppointmentManager.h"
+#include "WindowManager.h"
 
 class DoctorVisitQueryWin : public Window
 {
@@ -20,7 +21,6 @@ public:
     void prevPage();
     void nextPage();
     void selctapp();
-    Appointment* getselectedapp();
     
 private:
     Ctrl* lab1;          // 标题
@@ -35,8 +35,7 @@ private:
     int total_pages;                  
     int index;
     
-    vector<Appointment*> showVisits;  // 显示的就诊记录
-	Appointment* selctedapp; 
+    vector<Appointment*> showVisits;  // 显示的就诊记录 
 };
 
 #endif
