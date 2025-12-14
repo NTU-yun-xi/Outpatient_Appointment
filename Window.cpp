@@ -241,3 +241,13 @@ BaseUser* Window::GetCurrentUser()
 {
 	return this->currentUser;
 }
+
+void Window::SetCurrentApp(Appointment* app)
+{
+	this->currentApp = app;
+}
+
+Appointment* Window::GetCurrentApp()
+{
+	return this->currentApp;
+}

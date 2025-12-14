@@ -115,7 +115,7 @@ void VisitRecordWin::saveVisitRecord()
     AppointmentManager::getInstance()->saveAppointments(doctorId, thisdocapps);
 }
 
-void VisitRecordWin::setAppointment(Appointment* app)
+void VisitRecordWin::setAppointment()
 {
-	this->currentAppointment = app;
+	this->currentAppointment = this->currentApp;
 }

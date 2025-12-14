@@ -11,6 +11,7 @@
 #include "Admin.h"
 #include "Doctor.h"
 #include "Patient.h"
+#include "Appointment.h"
 #include "UserManager.h"
 
 #include <windows.h>
@@ -54,6 +55,9 @@ public:
 	void SetCurrentUser(BaseUser* user);
 	BaseUser* GetCurrentUser();
 	
+	void SetCurrentApp(Appointment* app);
+	Appointment* GetCurrentApp();
+	
 protected:
 	int win_startX;
 	int win_startY;
@@ -63,6 +67,7 @@ protected:
 	int flag;
 	Ctrl * arr[30];
 	BaseUser* currentUser; 
+	Appointment* currentApp;
 };
 
 #endif

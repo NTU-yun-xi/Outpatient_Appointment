@@ -31,8 +31,6 @@ DoctorVisitQueryWin::DoctorVisitQueryWin(int win_startX, int win_startY, int win
     this->index = 0;
     
     this->selctedapp = NULL;
-    
-    this->visitrecordwin = new VisitRecordWin(20,5,40,25);
 }
 
 DoctorVisitQueryWin::~DoctorVisitQueryWin()
@@ -43,7 +41,6 @@ DoctorVisitQueryWin::~DoctorVisitQueryWin()
 	delete this->btn3;
 	delete this->btn4;
 	delete this->table;
-	delete this->visitrecordwin;
 	delete this->selctedapp;
 }
 
@@ -148,11 +145,9 @@ int DoctorVisitQueryWin::doAction()
 		case 1:
 		case 2:
 		case 3:
-			this->selctapp();
-			((VisitRecordWin*)this->visitrecordwin)->setAppointment(this->selctedapp);
-			((VisitRecordWin*)this->visitrecordwin)->paintWindow();
-			this->visitrecordwin->winRun();
-			((VisitRecordWin*)this->visitrecordwin)->doAction();
+			this->selctapp(); 
+			this->SetCurrentApp(this->getselectedapp());
+			return 17;
 		case 4:
 			return 4;
 		default:

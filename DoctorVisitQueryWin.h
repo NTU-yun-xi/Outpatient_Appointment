@@ -5,7 +5,6 @@
 #include "PopWin.h"
 #include "Appointment.h"
 #include "AppointmentManager.h"
-#include "VisitRecordWin.h" 
 
 class DoctorVisitQueryWin : public Window
 {
@@ -38,7 +37,6 @@ private:
     
     vector<Appointment*> showVisits;  // 显示的就诊记录
 	Appointment* selctedapp; 
-	Window * visitrecordwin;
 };
 
 #endif

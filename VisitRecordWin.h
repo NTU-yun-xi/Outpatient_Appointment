@@ -18,7 +18,7 @@ public:
     void clearEdits();
     void saveVisitRecord();
     
-	void setAppointment(Appointment* app);
+	void setAppointment();
     
 private:
     Ctrl* lab1;      // БъЬт
