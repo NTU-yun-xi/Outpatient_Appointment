@@ -32,7 +32,7 @@ DoctorVisitQueryWin::DoctorVisitQueryWin(int win_startX, int win_startY, int win
     
     this->selctedapp = NULL;
     
-    this->visitrecordwin = new VisitRecordWin(20,5,50,25);
+    this->visitrecordwin = new VisitRecordWin(20,5,40,25);
 }
 
 DoctorVisitQueryWin::~DoctorVisitQueryWin()
@@ -149,10 +149,10 @@ int DoctorVisitQueryWin::doAction()
 		case 2:
 		case 3:
 			this->selctapp();
-			this->visitrecordwin->setAppointment(this->selctedapp);
-			this->visitrecordwin->paintWindow();
+			((VisitRecordWin*)this->visitrecordwin)->setAppointment(this->selctedapp);
+			((VisitRecordWin*)this->visitrecordwin)->paintWindow();
 			this->visitrecordwin->winRun();
-			this->visitrecordwin->doAction();
+			((VisitRecordWin*)this->visitrecordwin)->doAction();
 		case 4:
 			return 4;
 		default:
